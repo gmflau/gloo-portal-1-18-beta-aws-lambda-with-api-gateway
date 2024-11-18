@@ -25,13 +25,13 @@ High-level workflow:
 13. Clean up AWS resources
     
     
-1. Deploy KinD cluster
+#### 1. Deploy KinD cluster
 ```bash
 export CLUSTER1=cluster1
 ./data/deploy.sh 1 $CLUSTER1
 ```
 
-2. Deploy Keycloak as OIDC IdP    
+#### 2. Deploy Keycloak as OIDC IdP    
 Install Postgres database for use by Keycloak
 ```bash
 kubectl create namespace gloo-system
@@ -539,7 +539,7 @@ export PORT_KEYCLOAK=$(echo ${ENDPOINT_KEYCLOAK##*:})
 export KEYCLOAK_URL=http://${ENDPOINT_KEYCLOAK}
 ```
 
-3. Deploy Gloo Gateway with Gloo Portal
+#### 3. Deploy Gloo Gateway with Gloo Portal
 ```bash
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
 ```
@@ -597,7 +597,7 @@ settings:
 EOF
 ```
 
-4. Deploy a gateway proxy and configure HTTP/HTTPS listeners
+#### 4. Deploy a gateway proxy and configure HTTP/HTTPS listeners
 ```bash
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
    -keyout tls.key -out tls.crt -subj "/CN=*"
@@ -636,7 +636,7 @@ spec:
 EOF
 ```
 
-5. Deploy the sample AWS Lambda function service  
+#### 5. Deploy the sample AWS Lambda function service  
 Set AWS environment variables:
 ```bash
 export AWS_ACCESS_KEY_ID="<YOUR AWS ACCESS KEY ID>"
@@ -685,7 +685,7 @@ aws lambda create-function \
 popd
 ```
 
-6. Create an `Upstream` for the Lambda function and expose it
+#### 6. Create an `Upstream` for the Lambda function and expose it
 Create a Kubernetes secret to store the AWS access key and secret key:
 ```bash
 glooctl create secret aws \
@@ -750,7 +750,7 @@ spec:
 EOF
 ```
 
-7. Create a `VirtualHostOption` resource to transform Header's path and HTTP method into a JSON input for the AWS Lambda function upstream
+#### 7. Create a `VirtualHostOption` resource to transform Header's path and HTTP method into a JSON input for the AWS Lambda function upstream
 ```bash
 kubectl apply -f - <<EOF
 apiVersion: gateway.solo.io/v1
@@ -814,7 +814,7 @@ It should output:
 ```
 
 
-8. Use `ApiSchemaDiscovery` to create an ApiDoc resource for the AWS Lambda function
+#### 8. Use `ApiSchemaDiscovery` to create an ApiDoc resource for the AWS Lambda function
 View the Open API specification for the AWS Lambda function:
 ```bash
 export OPEN_API_SPEC_URL="https://raw.githubusercontent.com/gmflau/my-solo-io/refs/heads/main/simple-api-function/openapi2.yaml"
@@ -845,7 +845,7 @@ View the generated ApiDoc resource:
 kubectl get ApiDoc simple-api-lambda-function -n gloo-system -oyaml
 ```
 
-9. Create an `ApiProduct` object (a bundle of APIs) targetting the `HTTPRoute`
+#### 9. Create an `ApiProduct` object (a bundle of APIs) targetting the `HTTPRoute`
 ```bash
 kubectl apply -n gloo-system -f- <<EOF
 apiVersion: portal.gloo.solo.io/v1
@@ -879,7 +879,7 @@ spec:
 EOF
 ```
 
-10. Secure and expose the Gloo Portal backend
+#### 10. Secure and expose the Gloo Portal backend
 Create an `AuthConfig`:
 ```bash
 kubectl apply -f - <<EOF
@@ -1002,7 +1002,7 @@ Here is the expected output:
 We'll create it next.
 
 
-11. Deploy and expose the Gloo Portal frontend
+#### 11. Deploy and expose the Gloo Portal frontend
 ```bash
 kubectl apply -f - <<EOF
 apiVersion: v1
@@ -1138,7 +1138,7 @@ If you click on the `LOGIN` button on the top right corner, you'll be redirected
 Now, if you click on the `VIEW APIS` button, you should see the `Simple API Lambda Function`.
 ![Gloo Portal Frontend UI](./images/gloo-portal.png)
 
-12. Demonstrate the self service capabilities
+#### 12. Demonstrate the self service capabilities
 We're going to demonstrate how to allow users to create their own teams and applications, subscribe to API Products and get credentials.    
 
 Configure Gloo Gateway to authenticate the requests with API keys. The extauth server is using Open Policy Agent (OPA) to call the Gloo Gateway portal backend to validate the api key, check if it has access to the API and retrieve custom metadata.    
@@ -1347,7 +1347,7 @@ It should output:
 {"statusCode": 200, "headers": {"Content-Type": "text/plain", "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET", "Access-Control-Allow-Headers": "Content-Type"}, "body": "Hello, World!"}%
 ```
 
-13. Clean up AWS resources
+#### 13. Clean up AWS resources
 ```bash
 # Delete the Lambda function
 aws lambda delete-function --function-name simple-api-function
