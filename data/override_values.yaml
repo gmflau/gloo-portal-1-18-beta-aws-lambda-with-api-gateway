@@ -1,0 +1,36 @@
+gloo:
+  kubeGateway:
+    enabled: true
+  gatewayProxies:
+    gatewayProxy:
+      disabled: true
+  gateway:
+    validation:
+      allowWarnings: true
+      alwaysAcceptResources: false
+  gloo:
+    logLevel: info
+    deployment:
+      customEnv:
+        - name: GG_PORTAL_PLUGIN
+          value: "true"
+      livenessProbeEnabled: true
+  discovery:
+    enabled: false
+  rbac:
+    namespaced: true
+    nameSuffix: gg-demo
+observability:
+  enabled: false
+prometheus:
+  enabled: false
+grafana:
+  defaultInstallationEnabled: false
+gloo-fed:
+  enabled: false
+  glooFedApiserver:
+    enable: false
+gateway-portal-web-server:
+  enabled: true
+settings:
+  disableKubernetesDestinations: true
